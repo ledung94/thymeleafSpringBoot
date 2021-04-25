@@ -3,6 +3,10 @@ package com.example.thymeleafDemo.controller;
 import com.example.thymeleafDemo.domain.Contact;
 import com.example.thymeleafDemo.exception.ResourceNotFoundException;
 import com.example.thymeleafDemo.service.ContactService;
+
+import jp.co.snapec.front.web.model.req.smartnetsuper.ItemListSearchReqModel;
+
+import java.net.http.HttpRequest;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +25,7 @@ public class ContactController {
  
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
  
-    private final int ROW_PER_PAGE = 5;
+    private final int ROW_PER_PAGE = 2;
  
     @Autowired
     private ContactService contactService;
@@ -40,15 +44,24 @@ public class ContactController {
     public String getContacts(Model model,
             @RequestParam(value = "page", defaultValue = "1") int pageNumber) { 
     	List<Contact> contacts = contactService.findAll(pageNumber, ROW_PER_PAGE);
-    	 
+    	final int PAGE_LIMIT = 2;
         long count = contactService.count();
         boolean hasPrev = pageNumber > 1;
         boolean hasNext = (pageNumber * ROW_PER_PAGE) < count;
+        int fisrtPage = pageNumber > PAGE_LIMIT ? pageNumber - PAGE_LIMIT + 1 : 1;
+        //int lastPage = (int) (count < pageNumber + PAGE_LIMIT ? count : pageNumber + PAGE_LIMIT);
+        model.addAttribute("pageCount", count);
+        model.addAttribute("pageLimit", PAGE_LIMIT);
         model.addAttribute("contacts", contacts);
+        model.addAttribute("page", pageNumber);
+        model.addAttribute("firstPage", fisrtPage);
+        //model.addAttribute("lastPage", lastPage);
+        /*
         model.addAttribute("hasPrev", hasPrev);
         model.addAttribute("prev", pageNumber - 1);
         model.addAttribute("hasNext", hasNext);
         model.addAttribute("next", pageNumber + 1);
+        */
         return "contact-list";
     }
  
