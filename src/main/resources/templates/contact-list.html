@@ -34,6 +34,7 @@
             </table>          
         </div>
         <br/><br/>
+       
         <div>
         	<form method="get" th:action="@{/contacts}">
         	<button name="page" th:value="${page - 1}" th:disabled="${page == 1}">
@@ -41,7 +42,40 @@
 			</button>
 			
 			<ul>
-			<li th:each="pageNo, iter: ${#numbers.sequence( firstPage , firstPage + pageLimit > pageCount ? pageCount : firstPage + pageLimit -1)}">
+			<li th:each="pageNo, iter: ${#numbers.sequence(firstPage, lastPage)}">
+							<div th:if="${iter.index == 0 && pageNo > 1 }">
+								<button name="page" class="c-list-pager__link" disabled="disabled">
+									<p th:text="..."></p>
+								</button>
+							</div>
+							<div th:if="${ page > pageLimit ? pageNo >= page - pageLimit + 1 && pageNo <= page : pageNo >= firstPage && pageNo < firstPage + pageLimit}">
+								<button name="page" th:disabled="${pageNo == page}" th:value="${pageNo}">
+									<p th:text="${pageNo}"></p>
+								</button>
+							</div>
+							<div th:if="${iter.index == pageLimit - 1 && pageNo < pageCount }">
+								<button name="page" class="c-list-pager__link" disabled="disabled">
+									<p th:text="..."></p>
+								</button>
+							</div>
+						</li>
+			</ul>
+			
+        	<button name="page" th:value="${page + 1}" th:classappend="${page == pageCount} ? c-list-pager__item--disable" th:disabled="${page == pageCount}">
+								<th:block>Next</th:block>
+			</button>
+        	</form>
+           
+            
+        </div>
+         <div>
+        	<form method="get" th:action="@{/contacts}">
+        	<button name="page" th:value="${page - 1}" th:disabled="${page == 1}">
+								<th:block>Prev</th:block>
+			</button>
+			
+			<ul>
+			<li th:each="pageNo, iter: ${#numbers.sequence(firstPage , firstPage + pageLimit > pageCount ? pageCount : firstPage + pageLimit -1)}">
 							<div th:if="${iter.index == 0 && pageNo > 1 }">
 								<button name="page" class="c-list-pager__link" disabled="disabled">
 									<p th:text="..."></p>
@@ -67,5 +101,6 @@
            
             
         </div>
+        
     </body>
 </html>
